@@ -18,6 +18,7 @@ const { connect,
   getOrdersByUserId,
   getOrderById,
   getProductByName,
+  createUser,
 
 
 } = require('./db');
@@ -73,10 +74,13 @@ connect()
     
     // Authentication Routes
     app.post('/api/auth/register', (req, res) => {
-      const { username, email, password } = req.body;
-      const user = { user_id: uuidv4(), username, email, password };
-      users.push(user);
-      res.status(201).json({ message: 'User registered successfully' });
+      const { username, email, password ,firstName, secondName} = req.body;
+      // Add user to the database
+      createUser(username, email, password, firstName, secondName).then((user) => {
+        console.log(user);
+        res.status(201).json({ message: 'User registered successfully' });
+      }
+      );
     });
     
     app.post('/api/auth/login', (req, res) => {

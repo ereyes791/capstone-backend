@@ -49,8 +49,8 @@ async function createTables() {
         username VARCHAR(100) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
-        address TEXT,
-        phone_number VARCHAR(20)
+        first_name TEXT,
+        second_name VARCHAR(20)
       );
       
 CREATE TABLE IF NOT EXISTS Products (
@@ -100,8 +100,8 @@ async function seedData() {
       await client.query(`
         INSERT INTO Users (user_id, username, email, password_hash, address, phone_number)
         VALUES
-          (uuid_generate_v4(), 'user1', 'user1@example.com', '123456', '123 Main St', '1234567890'),
-          (uuid_generate_v4(), 'user2', 'user2@example.com', '123456', '456 Elm St', '0987654321')
+          (uuid_generate_v4(), 'user1', 'user1@example.com', '123456', 'user1', 'last1'),
+          (uuid_generate_v4(), 'user2', 'user2@example.com', '123456', 'user2', 'last2')
       `);
       // Insert dummy products
       await client.query(`
@@ -147,6 +147,21 @@ async function seedData() {
       console.log('Data seeded successfully');
     } catch (error) {
       console.error('Error seeding data:', error);
+    }
+  }
+
+  //create a new user 
+  async function createUser(username, email, password, first_name, second_name) {
+    try {
+      const result = await client.query(`
+        INSERT INTO Users (user_id, username, email, password_hash, first_name, second_name)
+        VALUES (uuid_generate_v4(), $1, $2, $3, $4, $5)
+        RETURNING *
+      `, [username, email, password, first_name, second_name]);
+  
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error creating user:', error);
     }
   }
   // get user with email and password
@@ -395,6 +410,7 @@ module.exports = {
     createOrder,
     getOrdersByUserId,
     getOrderById,
-    getProductByName
+    getProductByName,
+    createUser
 
 };
