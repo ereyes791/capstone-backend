@@ -1,13 +1,19 @@
 const { Client } = require('pg');
-const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
 
-// Configure your PostgreSQL connection
+// Read the SSL certificate file
+const sslCert = fs.readFileSync('./server.crt');
+
+// Configure your PostgreSQL connection with SSL/TLS options
 const client = new Client({
   user: 'capstone_db_adxh_user',
   host: 'cogt18ev3ddc73fcp1i0-a.oregon-postgres.render.com',
   database: 'capstone_db_adxh',
   password: '3xy9M3SrSvR8F5onChOljQeadwDxan7F',
   port: 5432, // Default PostgreSQL port
+  ssl: {
+    ca: sslCert, // Provide the SSL certificate
+  }
 });
 
 async function connect() {
