@@ -7,8 +7,9 @@ const client = new Client({
   database: 'capstone_db_adxh',
   password: '3xy9M3SrSvR8F5onChOljQeadwDxan7F',
   port: 5432, // Default PostgreSQL port
-  ssl: false // Disable SSL verification (not recommended)
-});
+  ssl: {
+    rejectUnauthorized: true // Enable SSL/TLS and reject unauthorized connections
+  }});
 
 async function connect() {
     try {
