@@ -1,8 +1,4 @@
 const { Client } = require('pg');
-const fs = require('fs');
-
-// Read the SSL certificate file
-const sslCert = fs.readFileSync('./server.crt');
 
 // Configure your PostgreSQL connection with SSL/TLS options
 const client = new Client({
@@ -11,9 +7,7 @@ const client = new Client({
   database: 'capstone_db_adxh',
   password: '3xy9M3SrSvR8F5onChOljQeadwDxan7F',
   port: 5432, // Default PostgreSQL port
-  ssl: {
-    ca: sslCert, // Provide the SSL certificate
-  }
+  ssl: false // Disable SSL verification (not recommended)
 });
 
 async function connect() {
