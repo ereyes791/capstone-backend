@@ -243,10 +243,8 @@ connect()
       // Get order by ID'
       const userId = req.user.user.user_id;
       const array = [];
-      console.log(userId);
-      console.log(req.user)
       getOrdersByUserId(userId).then(order => {
-        console.log(order);
+        console.log('products by order',getProductsByOrderId(order.order_id));
         array.push(getProductsByOrderId(order.order_id));
       });
       res.status(201).json(array);
