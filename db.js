@@ -98,7 +98,7 @@ async function seedData() {
     try {
       // Insert dummy users
       await client.query(`
-        INSERT INTO Users (user_id, username, email, password_hash, address, phone_number)
+        INSERT INTO Users (user_id, username, email, password_hash, first_name, second_name)
         VALUES
           (uuid_generate_v4(), 'user1', 'user1@example.com', '123456', 'user1', 'last1'),
           (uuid_generate_v4(), 'user2', 'user2@example.com', '123456', 'user2', 'last2')
