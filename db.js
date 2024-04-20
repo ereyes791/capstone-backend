@@ -160,6 +160,11 @@ async function seedData() {
       `, [username, email, password, first_name, second_name]);
   
       return result.rows[0];
+      //create a cart for the user
+      await client.query(`
+        INSERT INTO Carts (cart_id, user_id)
+        VALUES (uuid_generate_v4(), $1)
+      `, [result.rows[0].user_id]);
     } catch (error) {
       console.error('Error creating user:', error);
     }
@@ -364,7 +369,33 @@ async function updateProductById(productId, name, description, price) {
       console.error('Error creating order:', error);
     }
   }
-
+//create order products
+async function createOrderProduct(orderId, productId, quantity) {
+    try {
+      await client.query(`
+        INSERT INTO OrderProducts (order_product_id, order_id, product_id, quantity)
+        VALUES (uuid_generate_v4(), $1, $2, $3)
+      `, [orderId, productId, quantity]);
+  
+      console.log('Order product created successfully');
+    } catch (error) {
+      console.error('Error creating order product:', error);
+    }
+  }
+//get products with full details by order id
+async function getProductsByOrderId(orderId) {
+    try {
+      const result = await client.query(`
+        SELECT *
+        FROM OrderProducts op
+        JOIN Products p ON op.product_id = p.product_id
+        WHERE op.order_id = $1
+      `, [orderId]);
+      return result.rows;
+    } catch (error) {
+      console.error('Error getting products by order ID:', error);
+    }
+  }
 //gel all orders by user id
 async function getOrdersByUserId(userId) {
     try {
@@ -411,6 +442,8 @@ module.exports = {
     getOrdersByUserId,
     getOrderById,
     getProductByName,
-    createUser
+    createUser,
+    createOrderProduct,
+    getProductsByOrderId
 
 };

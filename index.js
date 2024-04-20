@@ -19,6 +19,8 @@ const { connect,
   getOrderById,
   getProductByName,
   createUser,
+  createOrderProduct,
+  getProductsByOrderId
 
 
 } = require('./db');
@@ -222,12 +224,32 @@ connect()
     
     app.get('/api/user/orders', authenticateToken, (req, res) => {
       // Get user's orders
-      const userId = req.user.user_id;
+      const userId = req.user.user.user_id;
       getOrdersByUserId(userId).then(orders => {
         res.json(orders);
       });
     });
+    //post order product and quantity
+    app.post('/api/user/orders/:order_id', authenticateToken, (req, res) => {
+      // Place order
+      const orderId = req.params.order_id;
+      const { product_id, quantity } = req.body;
+      createOrderProduct(orderId, product_id, quantity).then(order => {
+        res.status(201).json(order);
+      });
+    });
+    // get all orders by user id with product and quantity
+    app.get('/api/user/allOrders', authenticateToken, (req, res) => {
+      // Get order by ID'
+      const userId = req.user.user.user_id;
+      const array = [];
+      getOrdersByUserId(userId).then(order => {
+        array.push(getProductsByOrderId(order.order_id));
+      });
+      res.status(201).json(array);
+    });
     
+
     app.get('/api/user/orders/:order_id', authenticateToken, (req, res) => {
       // Get order by ID'
       const orderId = req.params.order_id;
