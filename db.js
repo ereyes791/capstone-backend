@@ -3,10 +3,10 @@ const { v4: uuidv4 } = require('uuid');
 
 // Configure your PostgreSQL connection
 const client = new Client({
-  user: 'esreyes',
-  host: 'localhost',
-  database: 'Calliope',
-  password: '123456',
+  user: 'capstone_db_adxh_user',
+  host: 'cogt18ev3ddc73fcp1i0-a.oregon-postgres.render.com',
+  database: 'capstone_db_adxh',
+  password: '3xy9M3SrSvR8F5onChOljQeadwDxan7F',
   port: 5432, // Default PostgreSQL port
 });
 
