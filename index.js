@@ -238,17 +238,25 @@ connect()
     });
     // get all orders by user id with product and quantity
     app.get('/api/user/allOrders', authenticateToken, (req, res) => {
-      // Get order by ID'
-      const userId = req.user.user.user_id;
-      const orderArray = [];
-      getOrdersByUserId(userId).then(orders => {
-        orders.forEach(order => {
-          getProductsByOrderId(order.order_id).then(product => {
-            orderArray.push({'order_id':order.order_id,'products':product});
-          });
+      try {
+        const userId = req.user.user.user_id;
+        const orders = await getOrdersByUserId(userId);
+        const orderArray = [];
+    
+        // Map each order to a promise that fetches its associated products
+        const productPromises = orders.map(async (order) => {
+          const products = await getProductsByOrderId(order.order_id);
+          return { order_id: order.order_id, products: products };
         });
-        res.status(201).json(orderArray);  
-      });
+    
+        // Wait for all product promises to resolve
+        const ordersWithProducts = await Promise.all(productPromises);
+        
+        res.status(200).json(ordersWithProducts);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
     });
     
 
