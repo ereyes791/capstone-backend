@@ -64,7 +64,6 @@ connect()
       const authHeader = req.headers['authorization'];
       const token = authHeader && authHeader.split(' ')[1];
       if (token == null) return res.sendStatus(401); // Unauthorized
-      console.log(req.headers['authorization'])
       jwt.verify(token, secretKey, (err, user) => {
         if (err) return res.sendStatus(403); // Forbidden
         req.user = user; // Attach user information to the request object

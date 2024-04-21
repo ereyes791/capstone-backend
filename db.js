@@ -252,9 +252,6 @@ async function getProductByName(name) {
   //add a product to the cart by user id and product id
   async function addProductToCart(userId, productId, quantity) {
     try {
-      console.log('userId',userId);
-      console.log('productId',productId);
-      console.log('quantity',quantity);
       let cart = await client.query(`
         SELECT cart_id FROM Carts WHERE user_id = $1
       `, [userId]).then(result => {
@@ -287,7 +284,6 @@ async function getProductByName(name) {
   //get cart items by user id
   async function getCartItemsByUserId(userId) {
     try {
-      console.log(userId);
       const result = await client.query(`
         SELECT ci.cart_item_id, ci.quantity, p.*
         FROM CartItems ci
@@ -409,13 +405,14 @@ async function getProductsByOrderId(orderId) {
       const cartId = await client.query(`
         SELECT cart_id FROM Carts WHERE user_id = (SELECT user_id FROM Orders WHERE order_id = $1)
       `, [orderId]);
+      console.log('cartId',cartId);
       // turn off all items in the cart
-      await client.query(`
+      const update = await client.query(`
         UPDATE CartItems
         SET in_cart = FALSE
         WHERE cart_id = $1
       `, [cartId]);
-      
+      console.log('update',update);
         return result.rows;
     } catch (error) {
       console.error('Error getting products by order ID:', error);
