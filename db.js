@@ -410,10 +410,13 @@ async function getProductsByOrderId(orderId) {
         SELECT cart_id FROM Carts WHERE user_id = (SELECT user_id FROM Orders WHERE order_id = $1)
       `, [orderId]);
       // turn off all items in the cart
-      turnItemsInCartFalse(cartId.rows[0].cart_id).then(() => {
-        console.log('Items in cart turned off');
+      await client.query(`
+        UPDATE CartItems
+        SET in_cart = FALSE
+        WHERE cart_id = $1
+      `, [cartId]);
+      
         return result.rows;
-      });
     } catch (error) {
       console.error('Error getting products by order ID:', error);
     }
