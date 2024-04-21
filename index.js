@@ -20,7 +20,8 @@ const { connect,
   getProductByName,
   createUser,
   createOrderProduct,
-  getProductsByOrderId
+  getProductsByOrderId,
+  createCart
 
 
 } = require('./db');
@@ -218,6 +219,7 @@ connect()
       const { total_amount } = req.body;
       createOrder(userId, total_amount).then(order => {
         res.status(201).json(order);
+        createCart(userId);
       });
     });
     

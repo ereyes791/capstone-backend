@@ -355,6 +355,19 @@ async function updateProductById(productId, name, description, price) {
       console.error('Error deleting cart item:', error);
     }
   }
+  //create a new cart
+  async function createCart(userId) {
+    try {
+      await client.query(`
+        INSERT INTO Carts (cart_id, user_id)
+        VALUES (uuid_generate_v4(), $1)
+      `, [userId]);
+  
+      console.log('Cart created successfully');
+    } catch (error) {
+      console.error('Error creating cart:', error);
+    }
+  }
   //create user orders
   async function createOrder(userId, total_amount) {
     try {
@@ -363,11 +376,6 @@ async function updateProductById(productId, name, description, price) {
         VALUES (uuid_generate_v4(), $1, $2)
         RETURNING *
       `, [userId, total_amount]);
-      // create a new cart for the user
-      await client.query(`
-        INSERT INTO Carts (cart_id, user_id)
-        VALUES (uuid_generate_v4(), $1)
-      `, [userId]);
       return result.rows[0];
     } catch (error) {
       console.error('Error creating order:', error);
@@ -449,6 +457,7 @@ module.exports = {
     getProductByName,
     createUser,
     createOrderProduct,
-    getProductsByOrderId
+    getProductsByOrderId,
+    createCart
 
 };
