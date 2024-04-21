@@ -245,11 +245,10 @@ connect()
         orders.forEach(order => {
           getProductsByOrderId(order.order_id).then(product => {
             orderArray.push({'order_id':order.order_id,'products':product});
-            res.status(201).json({'order_id':order.order_id,'products':product});
           });
         });
+        res.status(201).json(orderArray);  
       });
-      res.status(201).json(orderArray); 
     });
     
 
