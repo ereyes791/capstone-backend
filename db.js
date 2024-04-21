@@ -385,7 +385,13 @@ async function createOrderProduct(orderId, productId, quantity) {
         INSERT INTO OrderProducts (order_product_id, order_id, product_id, quantity)
         VALUES (uuid_generate_v4(), $1, $2, $3)
       `, [orderId, productId, quantity]);
-  
+      // turn off the in_cart flag for the cart item and order id
+      await client.query(`
+        UPDATE CartItems
+        SET in_cart = FALSE
+        WHERE cart_id = (SELECT cart_id FROM Carts WHERE user_id = (SELECT user_id FROM Orders WHERE order_id = $1))
+        AND product_id = $2
+      `, [orderId, productId]);
       console.log('Order product created successfully');
     } catch (error) {
       console.error('Error creating order product:', error);
@@ -401,19 +407,7 @@ async function getProductsByOrderId(orderId) {
         JOIN Products p ON op.product_id = p.product_id
         WHERE op.order_id = $1
       `, [orderId]);
-      // do a query to get the cart id using user id
-      const cartId = await client.query(`
-        SELECT cart_id FROM Carts WHERE user_id = (SELECT user_id FROM Orders WHERE order_id = $1)
-      `, [orderId]);
-      console.log('cartId',cartId);
-      // turn off all items in the cart
-      const update = await client.query(`
-        UPDATE CartItems
-        SET in_cart = FALSE
-        WHERE cart_id = $1
-      `, [cartId]);
-      console.log('update',update);
-        return result.rows;
+      return result.rows;
     } catch (error) {
       console.error('Error getting products by order ID:', error);
     }
