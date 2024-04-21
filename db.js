@@ -376,7 +376,9 @@ async function updateProductById(productId, name, description, price) {
         VALUES (uuid_generate_v4(), $1, $2)
         RETURNING *
       `, [userId, total_amount]);
-      return result.rows[0];
+      createCart(userId).then(() => {
+        return result.rows[0];
+      });
     } catch (error) {
       console.error('Error creating order:', error);
     }
