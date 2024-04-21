@@ -175,7 +175,6 @@ connect()
     // Cart Routes
     app.get('/api/user/cart', authenticateToken, (req, res) => {
       // Get user's cart
-      console.log('175',req.user);
       const userId = req.user.user.user_id;
       getCartItemsByUserId(userId).then(cartItems => {
         res.json(cartItems);

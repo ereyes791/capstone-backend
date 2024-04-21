@@ -243,7 +243,7 @@ async function getProductByName(name) {
         WHERE user_id = $1
       `, [userId]);
   
-      return result.rows[0];
+      return result.rows.pop();
     } catch (error) {
       console.error('Error getting cart by user ID:', error);
     }
@@ -363,7 +363,11 @@ async function updateProductById(productId, name, description, price) {
         VALUES (uuid_generate_v4(), $1, $2)
         RETURNING *
       `, [userId, total_amount]);
-  
+      // create a new cart for the user
+      await client.query(`
+        INSERT INTO Carts (cart_id, user_id)
+        VALUES (uuid_generate_v4(), $1)
+      `, [userId]);
       return result.rows[0];
     } catch (error) {
       console.error('Error creating order:', error);
