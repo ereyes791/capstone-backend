@@ -385,6 +385,7 @@ async function createOrderProduct(orderId, productId, quantity) {
 //get products with full details by order id
 async function getProductsByOrderId(orderId) {
     try {
+      console.log('orderId',orderId);
       const result = await client.query(`
         SELECT *
         FROM OrderProducts op
