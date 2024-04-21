@@ -391,6 +391,7 @@ async function getProductsByOrderId(orderId) {
         JOIN Products p ON op.product_id = p.product_id
         WHERE op.order_id = $1
       `, [orderId]);
+      console.log('result',result.rows);
       return result.rows;
     } catch (error) {
       console.error('Error getting products by order ID:', error);
