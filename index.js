@@ -237,7 +237,7 @@ connect()
       });
     });
     // get all orders by user id with product and quantity
-    app.get('/api/user/allOrders', authenticateToken, (req, res) => {
+    app.get('/api/user/allOrders', authenticateToken, async (req, res) => {
       try {
         const userId = req.user.user.user_id;
         const orders = await getOrdersByUserId(userId);
