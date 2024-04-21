@@ -244,7 +244,9 @@ connect()
       const userId = req.user.user.user_id;
       const array = [];
       getOrdersByUserId(userId).then(order => {
-        console.log('products by order',getProductsByOrderId(order.order_id));
+        getProductsByOrderId(order.order_id).then(product => {
+          console.log('product',product);
+        });
         array.push(getProductsByOrderId(order.order_id));
       });
       res.status(201).json(array);
