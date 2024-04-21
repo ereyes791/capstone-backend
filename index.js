@@ -247,6 +247,7 @@ connect()
         orders.forEach(order => {
           getProductsByOrderId(order.order_id).then(product => {
             console.log('product',product);
+            array.push({'order_id':order.order_id,'products':product});
           });
         });
       });
