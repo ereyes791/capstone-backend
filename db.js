@@ -285,7 +285,7 @@ async function getProductByName(name) {
   async function getCartItemsByUserId(userId) {
     try {
       const result = await client.query(`
-        SELECT ci.cart_item_id, ci.quantity, p.*
+        SELECT *
         FROM CartItems ci
         JOIN Products p ON ci.product_id = p.product_id
         WHERE ci.cart_id = (SELECT cart_id FROM Carts WHERE user_id = $1)
