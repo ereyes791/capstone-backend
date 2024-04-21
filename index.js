@@ -242,16 +242,13 @@ connect()
     app.get('/api/user/allOrders', authenticateToken, (req, res) => {
       // Get order by ID'
       const userId = req.user.user.user_id;
-      const array = [];
       getOrdersByUserId(userId).then(orders => {
         orders.forEach(order => {
           getProductsByOrderId(order.order_id).then(product => {
-            console.log('product',product);
-            array.push({'order_id':order.order_id,'products':product});
+            res.status(201).json({'order_id':order.order_id,'products':product});
           });
         });
       });
-      res.status(201).json(array);
     });
     
 
