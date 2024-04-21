@@ -71,7 +71,8 @@ CREATE TABLE IF NOT EXISTS Products (
         cart_item_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         cart_id UUID REFERENCES Carts(cart_id) ON DELETE CASCADE,
         product_id UUID REFERENCES Products(product_id) ON DELETE CASCADE,
-        quantity INT NOT NULL
+        quantity INT NOT NULL,
+        in_cart BOOLEAN DEFAULT TRUE
       );
 
       CREATE TABLE IF NOT EXISTS Orders (
@@ -376,9 +377,7 @@ async function updateProductById(productId, name, description, price) {
         VALUES (uuid_generate_v4(), $1, $2)
         RETURNING *
       `, [userId, total_amount]);
-      createCart(userId).then(() => {
         return result.rows[0];
-      });
     } catch (error) {
       console.error('Error creating order:', error);
     }
@@ -406,7 +405,15 @@ async function getProductsByOrderId(orderId) {
         JOIN Products p ON op.product_id = p.product_id
         WHERE op.order_id = $1
       `, [orderId]);
-      return result.rows;
+      // do a query to get the cart id using user id
+      const cartId = await client.query(`
+        SELECT cart_id FROM Carts WHERE user_id = (SELECT user_id FROM Orders WHERE order_id = $1)
+      `, [orderId]);
+      // turn off all items in the cart
+      turnItemsInCartFalse(cartId.rows[0].cart_id).then(() => {
+        console.log('Items in cart turned off');
+        return result.rows;
+      });
     } catch (error) {
       console.error('Error getting products by order ID:', error);
     }
@@ -418,13 +425,26 @@ async function getOrdersByUserId(userId) {
         SELECT * FROM Orders
         WHERE user_id = $1
       `, [userId]);
-  
       return result.rows;
     } catch (error) {
       console.error('Error getting orders by user ID:', error);
     }
   }
+//turn all items in cart to false
+async function turnItemsInCartFalse(cartId) {
+    try {
+      await client.query(`
+        UPDATE CartItems
+        SET in_cart = FALSE
+        WHERE cart_id = $1
+      `, [cartId]);
+  
+      console.log('Items in cart turned off successfully');
+    } catch (error) {
+      console.error('Error turning items in cart off:', error);
+    }
 
+  }
   //get order by id
 async function getOrderById(orderId) {
     try {

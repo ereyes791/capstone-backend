@@ -20,8 +20,7 @@ const { connect,
   getProductByName,
   createUser,
   createOrderProduct,
-  getProductsByOrderId,
-  createCart
+  getProductsByOrderId
 
 
 } = require('./db');
