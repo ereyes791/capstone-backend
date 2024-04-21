@@ -160,16 +160,18 @@ async function seedData() {
         RETURNING *
       `, [username, email, password, first_name, second_name]);
   
-      return result.rows[0];
-      //create a cart for the user
+      // Create a cart for the user
       await client.query(`
         INSERT INTO Carts (cart_id, user_id)
         VALUES (uuid_generate_v4(), $1)
       `, [result.rows[0].user_id]);
+  
+      return result.rows[0];
     } catch (error) {
       console.error('Error creating user:', error);
     }
   }
+  
   // get user with email and password
 async function getUserByEmailAndPassword(email, password) {
     try {

@@ -75,9 +75,9 @@ connect()
     
     // Authentication Routes
     app.post('/api/auth/register', (req, res) => {
-      const { username, email, password ,firstName, secondName} = req.body;
+      const { username, email, password ,firstName, lastName} = req.body;
       // Add user to the database
-      createUser(username, email, password, firstName, secondName).then((user) => {
+      createUser(username, email, password, firstName, lastName).then((user) => {
         console.log(user);
         res.status(201).json({ message: 'User registered successfully' });
       }
