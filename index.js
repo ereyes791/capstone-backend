@@ -241,8 +241,11 @@ connect()
       // Get order by ID'
       const userId = req.user.user.user_id;
       getOrdersByUserId(userId).then(orders => {
+        console.log('order',orders);
         orders.forEach(order => {
+          console.log('proyect',order.order_id);
           getProductsByOrderId(order.order_id).then(product => {
+            console.log('product',product);
             res.status(201).json({'order_id':order.order_id,'products':product});
           });
         });

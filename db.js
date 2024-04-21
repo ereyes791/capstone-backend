@@ -252,18 +252,6 @@ async function getProductByName(name) {
   //add a product to the cart by user id and product id
   async function addProductToCart(userId, productId, quantity) {
     try {
-      let cart = await client.query(`
-        SELECT cart_id FROM Carts WHERE user_id = $1
-      `, [userId]).then(result => {
-        return result.rows[0];
-      });
-      if (!cart) {
-        // Create a new cart if the user doesn't have one
-        await client.query(`
-          INSERT INTO Carts (cart_id, user_id)
-          VALUES (uuid_generate_v4(), $1)
-        `, [userId]);
-      }
       // Add the product to the cart
       await client.query(`
         INSERT INTO CartItems (cart_item_id, cart_id, product_id, quantity)
@@ -423,21 +411,6 @@ async function getOrdersByUserId(userId) {
     } catch (error) {
       console.error('Error getting orders by user ID:', error);
     }
-  }
-//turn all items in cart to false
-async function turnItemsInCartFalse(cartId) {
-    try {
-      await client.query(`
-        UPDATE CartItems
-        SET in_cart = FALSE
-        WHERE cart_id = $1
-      `, [cartId]);
-  
-      console.log('Items in cart turned off successfully');
-    } catch (error) {
-      console.error('Error turning items in cart off:', error);
-    }
-
   }
   //get order by id
 async function getOrderById(orderId) {
